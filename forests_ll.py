@@ -71,3 +71,25 @@ for dat_name in dat_list:
             writer.writerow([dat_name, site] + ll_site)
 
 writer_link.close()
+
+# Examine P_M_SSNT & P_M_EXP in BCI
+out_dir_bci = 'C:\\Users\\Xiao\\Dropbox\\projects\\maxent_null\\bci_ll_comp.csv'
+writer_link = open(out_dir_bci, 'wb')
+writer = csv.writer(writer_link)
+writer.writerow(['sp', 'n', 'M', 'P_SSNT', 'P_EXP'])
+
+dat_bci = import_raw_data(dat_dir + 'BCI.csv')
+S = len(np.unique(dat_bci['sp']))
+N = len(dat_bci)
+Mtot = sum(dat_bci['dbh'])
+m0 = Mtot / N
+lambda2 = S / Mtot
+for sp in np.unique(dat_bci['sp']):
+    dat_sp = dat_bci[dat_bci['sp'] == sp]
+    M = sum(dat_sp['dbh'])
+    n = len(dat_sp)
+    ll_ssnt = -np.log(m0) - sum(np.log(range(1, n))) + (n - 1)  * np.log(M / m0) - M / m0
+    ll_exp = np.log(lambda2) - lambda2 * M
+    writer.writerow([sp, n, M, ll_ssnt, ll_exp])
+
+writer_link.close()
